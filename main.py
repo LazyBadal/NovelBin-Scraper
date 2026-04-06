@@ -5,6 +5,7 @@ from toc_loader import load_all_chapters
 import time
 
 def main():
+    novel_name = input("Enter Novel Name: ")
     url = input("Enter NovelBin URL: ").strip()
     url = url.split("#")[0]
 
@@ -30,7 +31,7 @@ def main():
         return
 
     selected_chapters = chapters[start - 1:end]
-    folder_name = "data"
+    folder_name = novel_name
 
     # Create one shared session for all chapter downloads
     session = create_session(url)
