@@ -15,3 +15,8 @@ pip install requests beautifulsoup4 lxml ebooklib
 ## Use
 - run main.py and give the novelbin url
 - run epub_create to get an epub
+
+
+
+## Warning
+Don't go crazy with it -_-, too many requests could cause issues. 
