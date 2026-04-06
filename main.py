@@ -1,5 +1,6 @@
 import os
 import time
+import random
 
 from scraper import fetch_page, create_session
 from parser import parse_chapter
@@ -62,7 +63,15 @@ def main():
 
         save_chapter(folder_name, i, title, text)
 
-        time.sleep(1.5)
+        # Delay so i don't get my ip banned
+        delay = random.uniform(2.5, 4.5)
+        print(f"[INFO] Sleeping for {delay:.2f}s...")
+        time.sleep(delay)
+
+        if i % 30 == 0:
+            long_break = random.uniform(10.0, 20.0)
+            print(f"[INFO] Taking a longer break for {long_break:.2f}s...")
+            time.sleep(long_break)
 
     # Final summary
     if failed_chapters:
