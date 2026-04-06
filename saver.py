@@ -25,4 +25,4 @@ def save_chapter(folder_name, chapter_number, chapter_title, chapter_text):
         f.write(chapter_title + "\n\n")
         f.write(chapter_text)
 
-    print(f"[SAVED] {file_path}")
+    #print(f"[SAVED] {file_path}")
