@@ -1,4 +1,4 @@
-from scraper import fetch_page
+from scraper import fetch_page, create_session
 from parser import parse_chapter
 from saver import save_chapter
 from toc_loader import load_all_chapters
@@ -18,10 +18,6 @@ def main():
     for ch in chapters[:5]:
         print(ch)
 
-    # Reverse so Chapter 1 is first
-    chapters.reverse()
-
-    # --- NEW PART ---
     try:
         start = int(input("Start chapter number: "))
         end = int(input("End chapter number: "))
@@ -34,21 +30,22 @@ def main():
         return
 
     selected_chapters = chapters[start - 1:end]
-    # --- END NEW PART ---
-
     folder_name = "data"
+
+    # Create one shared session for all chapter downloads
+    session = create_session(url)
 
     for i, chapter in enumerate(selected_chapters, start=start):
         print(f"[INFO] Downloading Chapter {i}: {chapter['title']}")
 
-        html = fetch_page(chapter["url"])
+        html = fetch_page(session, chapter["url"])
         if not html:
             continue
 
         title, text = parse_chapter(html)
 
         if text.strip():
-            save_chapter(folder_name, title, text)
+            save_chapter(folder_name, i, title, text)
         else:
             print(f"[WARNING] Empty content: {title}")
 
