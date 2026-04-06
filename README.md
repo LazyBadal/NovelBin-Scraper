@@ -12,6 +12,6 @@ A simple Python scraper for downloading web novel chapters from NovelBin and con
 ## Install
 pip install requests beautifulsoup4 lxml ebooklib
 
-##Use
-run main.py and give the novelbin url
-rrun epub_create to get an epub
+## Use
+- run main.py and give the novelbin url
+- run epub_create to get an epub
