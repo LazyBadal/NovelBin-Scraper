@@ -19,4 +19,4 @@ pip install requests beautifulsoup4 lxml ebooklib
 
 
 ## Warning
-Don't go crazy with it -_-, too many requests could cause issues. 
+Don't go crazy with it -_- , too many requests could cause issues, I don't want this to break T-T.
