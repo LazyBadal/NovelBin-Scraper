@@ -1,21 +1,19 @@
 import requests
 from bs4 import BeautifulSoup
 
+
 def load_all_chapters(url):
+
     clean_url = url.split("#")[0].strip().rstrip("/")
 
-    if "/b/" in clean_url:
-        slug = clean_url.split("/b/")[-1]
-    elif "novelId=" in clean_url:
-        slug = clean_url.split("novelId=")[-1]
-    else:
-        print("[ERROR] Could not extract novel slug from URL.")
-        return []
+    slug = clean_url.split("/")[-1]
 
-    archive_url = f"https://novelbin.com/ajax/chapter-archive?novelId={slug}"
-    print(f"[INFO] Fetching chapter archive: {archive_url}")
+    archive_url = (
+        "https://novelbin.me/ajax/"
+        f"chapter-archive?novelId={slug}"
+    )
 
-    session = requests.Session()
+    print(f"[INFO] Fetching archive: {archive_url}")
 
     headers = {
         "User-Agent": (
@@ -23,39 +21,61 @@ def load_all_chapters(url):
             "AppleWebKit/537.36 (KHTML, like Gecko) "
             "Chrome/146.0.0.0 Safari/537.36"
         ),
-        "Accept": "*/*",
-        "Accept-Language": "en-GB,en;q=0.7",
-        "Referer": f"https://novelbin.com/b/{slug}",
         "X-Requested-With": "XMLHttpRequest",
+        "Referer": clean_url
     }
 
-    # First hit main page to get cookies
-    main_page = session.get(f"https://novelbin.com/b/{slug}", headers=headers)
-    print(f"[INFO] Main page status: {main_page.status_code}")
+    session = requests.Session()
 
-    # Then hit AJAX archive endpoint
-    response = session.get(archive_url, headers=headers)
-    print(f"[INFO] Archive page status: {response.status_code}")
+    response = session.get(
+        archive_url,
+        headers=headers
+    )
+
+    print(f"[INFO] Status: {response.status_code}")
 
     if response.status_code != 200:
-        print(f"[ERROR] Failed to fetch archive page: {response.status_code}")
+
+        print("[ERROR] Failed to fetch chapter archive")
+
         return []
 
-    soup = BeautifulSoup(response.text, "html.parser")
-    chapter_elements = soup.select("ul.list-chapter li a")
+    soup = BeautifulSoup(
+        response.text,
+        "html.parser"
+    )
+
+    chapter_elements = soup.select("a")
 
     chapters = []
+
     seen = set()
 
     for el in chapter_elements:
-        title = el.get("title", "").strip() or el.get_text(strip=True)
+
         href = el.get("href")
 
-        if href and href not in seen:
-            seen.add(href)
-            chapters.append({
-                "title": title if title else "Unknown Chapter",
-                "url": href
-            })
+        if not href:
+            continue
+
+        if href.startswith("/"):
+            href = "https://novelbin.me" + href
+
+        if href in seen:
+            continue
+
+        seen.add(href)
+
+        title = (
+            el.get("title", "").strip()
+            or el.get_text(strip=True)
+        )
+
+        chapters.append({
+            "title": title,
+            "url": href
+        })
+
+    print(f"[INFO] Found {len(chapters)} chapters")
 
     return chapters

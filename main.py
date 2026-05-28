@@ -40,7 +40,11 @@ def main():
 
     # Save inside project folder -> data/<Novel Name>/
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    slug = url.split("/b/")[-1].split("#")[0].strip("/")
+    slug = (
+    url.rstrip("/")
+    .split("/")[-1]
+    .split("#")[0]
+)
     novel_folder = slug.replace("-", " ").title()
     folder_name = os.path.join(base_dir, "data", novel_folder)
 
