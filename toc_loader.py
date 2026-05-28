@@ -13,7 +13,7 @@ def load_all_chapters(url):
         f"chapter-archive?novelId={slug}"
     )
 
-    print(f"[INFO] Fetching archive: {archive_url}")
+    print(f"[INFO] Fetching chapter archive: {archive_url}")
 
     headers = {
         "User-Agent": (
@@ -21,22 +21,25 @@ def load_all_chapters(url):
             "AppleWebKit/537.36 (KHTML, like Gecko) "
             "Chrome/146.0.0.0 Safari/537.36"
         ),
+        "Accept": "*/*",
+        "Accept-Language": "en-GB,en;q=0.7",
         "X-Requested-With": "XMLHttpRequest",
-        "Referer": clean_url
+        "Referer": clean_url,
     }
 
-    session = requests.Session()
-
-    response = session.get(
+    response = requests.get(
         archive_url,
         headers=headers
     )
 
-    print(f"[INFO] Status: {response.status_code}")
+    print(f"[INFO] Archive status: {response.status_code}")
 
     if response.status_code != 200:
 
-        print("[ERROR] Failed to fetch chapter archive")
+        print(
+            f"[ERROR] Failed to fetch archive: "
+            f"{response.status_code}"
+        )
 
         return []
 
@@ -72,7 +75,7 @@ def load_all_chapters(url):
         )
 
         chapters.append({
-            "title": title,
+            "title": title if title else "Unknown Chapter",
             "url": href
         })
 
