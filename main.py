@@ -21,8 +21,10 @@ def download_novel(
     start,
     end,
     progress_callback=None,
-    status_callback=None
+    status_callback=None,
+    log_callback=None
 ):
+
 
     url = url.split("#")[0]
 

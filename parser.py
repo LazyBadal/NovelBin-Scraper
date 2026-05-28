@@ -1,40 +1,60 @@
 from bs4 import BeautifulSoup
 
 def parse_chapter(html):
-    soup = BeautifulSoup(html, "lxml")
 
-    content_div = soup.find("div", id="chr-content")
+    soup = BeautifulSoup(
+        html,
+        "lxml"
+    )
+
+    content_div = soup.find(
+        "div",
+        id="chr-content"
+    )
 
     if not content_div:
         return "Unknown Chapter", ""
 
-    # Find the real chapter title inside content
-    title_tag = content_div.find("h3")
-    chapter_title = title_tag.get_text(strip=True) if title_tag else "Unknown Chapter"
+    # Title
+    title_tag = soup.find("h2")
 
-    # Remove junk tags we don't want
-    for junk in content_div.find_all(["script", "style", "iframe"]):
+    chapter_title = (
+        title_tag.get_text(strip=True)
+        if title_tag else "Unknown Chapter"
+    )
+
+    # Remove junk
+    for junk in content_div.find_all([
+        "script",
+        "style",
+        "iframe",
+        "ins",
+        "ads",
+        "noscript"
+    ]):
         junk.decompose()
 
-    chapter_lines = []
-    started = False
+    # Convert <br> to newlines
+    for br in content_div.find_all("br"):
+        br.replace_with("\n")
 
-    for tag in content_div.find_all(["h3", "p"]):
-        if tag.name == "h3":
-            started = True
+    chapter_text = content_div.get_text(
+        separator="\n",
+        strip=True
+    )
+
+    # Cleanup excessive empty lines
+    lines = []
+
+    for line in chapter_text.splitlines():
+
+        line = line.strip()
+
+        if not line:
             continue
 
-        if not started:
-            continue
+        lines.append(line)
 
-        text = tag.get_text(strip=True)
-
-        # Skip empty junk
-        if not text:
-            continue
-
-        chapter_lines.append(text)
-
-    chapter_text = "\n\n".join(chapter_lines)
+    chapter_text = "\n\n".join(lines)
 
     return chapter_title, chapter_text
