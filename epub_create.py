@@ -2,7 +2,7 @@ import os
 from epub_builder import build_epub
 
 def main():
-    folder = input("Enter folder path (e.g. data/Supreme Harem God System): ").strip()
+    folder = input("Enter folder path (e.g. data/series name): ").strip()
 
     if not os.path.exists(folder):
         print("[ERROR] Folder does not exist.")
